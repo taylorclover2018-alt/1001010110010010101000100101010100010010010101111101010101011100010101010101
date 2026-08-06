@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Transporte Fácil | Gestão de Rateio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Sistema de gestão e rateio de transporte universitário com relatórios, histórico e exportação para PDF." />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- jsPDF + html2canvas para PDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon">R</div>
+      <div class="sidebar-logo-text">Transporte Fácil</div>
+    </div>
+
+    <div class="sidebar-section-title">Navegação</div>
+    <ul class="sidebar-nav">
+      <li><button class="sidebar-link active" data-section="dashboard">
+        <span class="icon">📊</span> Dashboard
+      </button></li>
+      <li><button class="sidebar-link" data-section="rateio">
+        <span class="icon">🧮</span> Rateio
+      </button></li>
+      <li><button class="sidebar-link" data-section="relatorio">
+        <span class="icon">📑</span> Relatórios
+      </button></li>
+      <li><button class="sidebar-link" data-section="historico">
+        <span class="icon">🕒</span> Histórico
+      </button></li>
+    </ul>
+
+    <div class="sidebar-section-title">Sistema</div>
+    <ul class="sidebar-nav">
+      <li><button class="sidebar-link" id="btn-export-pdf">
+        <span class="icon">📄</span> Exportar PDF
+      </button></li>
+      <li><button class="sidebar-link" id="btn-reset">
+        <span class="icon">⚠️</span> Limpar LocalStorage
+      </button></li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <div>Versão 1.0 • Comercial</div>
+      <div class="mt-8 text-xs">Desenvolvido para gestão de rateio de transporte universitário.</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">Gestão de Rateio</div>
+        <div class="topbar-subtitle">Controle financeiro de transporte universitário com rotas Curvelo e Sete Lagoas</div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-date" id="topbar-date"></div>
+        <div class="topbar-badge" id="topbar-current-period"></div>
+        <button class="theme-toggle" id="theme-toggle" type="button" title="Alternar tema">☀️</button>
+      </div>
+    </header>
+
+    <div class="mobile-nav" aria-label="Navegação móvel">
+      <button class="sidebar-link active" data-section="dashboard">Dashboard</button>
+      <button class="sidebar-link" data-section="rateio">Rateio</button>
+      <button class="sidebar-link" data-section="relatorio">Relatórios</button>
+      <button class="sidebar-link" data-section="historico">Histórico</button>
+    </div>
+
+    <!-- CONTENT -->
+    <section class="content">
+      <!-- DASHBOARD -->
+      <section id="section-dashboard" class="dashboard-section">
+        <div class="hero-banner">
+          <div>
+            <div class="hero-eyebrow">SaaS para gestão financeira</div>
+            <h2>Organize o rateio do transporte universitário com mais clareza e rapidez.</h2>
+            <p>Centralize valores, acompanhe rotas, visualize relatórios e mantenha o histórico do mês em um painel moderno.</p>
+          </div>
+          <div class="hero-actions">
+            <button class="btn btn-primary" data-section-target="rateio">Cadastrar novo rateio</button>
+            <button class="btn btn-outline" id="btn-export-pdf-hero">Exportar relatório</button>
+          </div>
+        </div>
+
+        <div class="cards-grid">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Total Rateado</div>
+              <span class="tag-primary">Mês atual</span>
+            </div>
+            <div class="card-value" id="card-total-rateado">R$ 0,00</div>
+            <div class="card-sub">Após auxílio e passagens</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Total de Alunos</div>
+              <span class="tag-muted">Equivalentes</span>
+            </div>
+            <div class="card-value" id="card-total-alunos">0</div>
+            <div class="card-sub">Considerando descontos proporcionais</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Veículos Ativos</div>
+              <span class="tag-muted">Rotas</span>
+            </div>
+            <div class="card-value" id="card-veiculos-ativos">0</div>
+            <div class="card-sub">Curvelo + Sete Lagoas</div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Auxílio Total</div>
+              <span class="tag-muted">Dinheiro + Combustível</span>
+            </div>
+            <div class="card-value" id="card-auxilio-total">R$ 0,00</div>
+            <div class="card-sub">Distribuído proporcionalmente por rota</div>
+          </div>
+        </div>
+
+        <div class="grid-2 mt-16">
+          <div class="card">
+            <div class="flex-between">
+              <div>
+                <div class="section-title">Evolução do Rateio</div>
+                <div class="section-subtitle">Total rateado por mês (histórico salvo)</div>
+              </div>
+              <span class="tag">Linha</span>
+            </div>
+            <div class="mt-12">
+              <canvas id="chart-line"></canvas>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="flex-between">
+              <div>
+                <div class="section-title">Distribuição por Rota</div>
+                <div class="section-subtitle">Percentual do bruto por rota</div>
+              </div>
+              <span class="tag">Pizza</span>
+            </div>
+            <div class="mt-12">
+              <canvas id="chart-pie"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-2 mt-16">
+          <div class="card">
+            <div class="flex-between">
+              <div>
+                <div class="section-title">Bruto por Rota</div>
+                <div class="section-subtitle">Comparativo Curvelo x Sete Lagoas</div>
+              </div>
+              <span class="tag">Barras</span>
+            </div>
+            <div class="mt-12">
+              <canvas id="chart-bar"></canvas>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="section-title">Resumo do Período</div>
+            <div class="section-subtitle">Dados consolidados do filtro atual</div>
+
+            <div class="mt-12 flex-col gap-8 text-sm">
+              <div class="flex-between">
+                <span class="text-muted">Bruto Curvelo</span>
+                <span id="resumo-bruto-curvelo">R$ 0,00</span>
+              </div>
+              <div class="flex-between">
+                <span class="text-muted">Bruto Sete Lagoas</span>
+                <span id="resumo-bruto-sete">R$ 0,00</span>
+              </div>
+              <div class="flex-between">
+                <span class="text-muted">Percentual Curvelo</span>
+                <span id="resumo-perc-curvelo">0%</span>
+              </div>
+              <div class="flex-between">
+                <span class="text-muted">Percentual Sete Lagoas</span>
+                <span id="resumo-perc-sete">0%</span>
+              </div>
+              <div class="divider"></div>
+              <div class="flex-between">
+                <span class="text-muted">Auxílio Curvelo</span>
+                <span id="resumo-aux-curvelo">R$ 0,00</span>
+              </div>
+              <div class="flex-between">
+                <span class="text-muted">Auxílio Sete Lagoas</span>
+                <span id="resumo-aux-sete">R$ 0,00</span>
+              </div>
+              <div class="flex-between">
+                <span class="text-muted">Desconto aplicado Curvelo</span>
+                <span id="resumo-desconto-curvelo">R$ 0,00</span>
+              </div>
+              <div class="flex-between">
+                <span class="text-muted">Desconto aplicado Sete Lagoas</span>
+                <span id="resumo-desconto-sete">R$ 0,00</span>
+              </div>
+              <div class="divider"></div>
+              <div class="flex-between">
+                <span class="text-muted">Valor por aluno Curvelo</span>
+                <span id="resumo-aluno-curvelo">R$ 0,00</span>
+              </div>
+              <div class="flex-between">
+                <span class="text-muted">Valor por aluno Sete Lagoas</span>
+                <span id="resumo-aluno-sete">R$ 0,00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RATEIO -->
+      <section id="section-rateio" style="display:none;">
+        <div class="card">
+          <div class="flex-between">
+            <div>
+              <div class="section-title">Novo Rateio</div>
+              <div class="section-subtitle">Cadastre os dados do mês e das rotas</div>
+            </div>
+            <div class="form-inline">
+              <div class="form-group">
+                <label>Filtro Mês/Ano</label>
+                <div class="form-inline">
+                  <select id="filtro-mes" class="text-sm">
+                    <option value="">Mês</option>
+                    <option value="1">Jan</option>
+                    <option value="2">Fev</option>
+                    <option value="3">Mar</option>
+                    <option value="4">Abr</option>
+                    <option value="5">Mai</option>
+                    <option value="6">Jun</option>
+                    <option value="7">Jul</option>
+                    <option value="8">Ago</option>
+                    <option value="9">Set</option>
+                    <option value="10">Out</option>
+                    <option value="11">Nov</option>
+                    <option value="12">Dez</option>
+                  </select>
+                  <select id="filtro-ano" class="text-sm">
+                    <option value="">Ano</option>
+                  </select>
+                  <button class="btn btn-outline btn-sm" id="btn-aplicar-filtro">Aplicar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- DADOS GERAIS -->
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Data de Referência</label>
+              <input type="date" id="input-data" />
+            </div>
+            <div class="form-group">
+              <label>Mês</label>
+              <select id="input-mes">
+                <option value="">Selecione</option>
+                <option value="1">Janeiro</option>
+                <option value="2">Fevereiro</option>
+                <option value="3">Março</option>
+                <option value="4">Abril</option>
+                <option value="5">Maio</option>
+                <option value="6">Junho</option>
+                <option value="7">Julho</option>
+                <option value="8">Agosto</option>
+                <option value="9">Setembro</option>
+                <option value="10">Outubro</option>
+                <option value="11">Novembro</option>
+                <option value="12">Dezembro</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Ano</label>
+              <select id="input-ano"></select>
+            </div>
+            <div class="form-group">
+              <label>Auxílio Dinheiro (R$)</label>
+              <input type="number" step="0.01" id="input-aux-dinheiro" placeholder="0,00" />
+            </div>
+            <div class="form-group">
+              <label>Auxílio Combustível (R$)</label>
+              <input type="number" step="0.01" id="input-aux-combustivel" placeholder="0,00" />
+            </div>
+            <div class="form-group" style="grid-column: span 3;">
+              <label>Descrição</label>
+              <textarea id="input-descricao" placeholder="Ex: Rateio referente ao mês de ..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ROTAS -->
+        <div class="grid-2 mt-16">
+          <!-- CURVELO -->
+          <div class="card route-card curvelo-route">
+            <div class="flex-between">
+              <div>
+                <div class="section-title">Rota Curvelo</div>
+                <div class="section-subtitle">Configuração de alunos, passagens e veículos</div>
+              </div>
+              <span class="pill">Curvelo</span>
+            </div>
+
+            <div class="mt-12 form-grid">
+              <div class="form-group">
+                <label>Alunos Integrais</label>
+                <input type="number" id="curvelo-alunos-integrais" min="0" />
+              </div>
+              <div class="form-group">
+                <label>Alunos com Desconto</label>
+                <input type="number" id="curvelo-alunos-desconto" min="0" />
+              </div>
+              <div class="form-group">
+                <label>% Desconto</label>
+                <input type="number" id="curvelo-perc-desconto" min="0" max="100" />
+              </div>
+                <div class="form-group">
+                <label>Passagens Arrecadadas (R$)</label>
+                <input type="number" step="0.01" id="curvelo-passagens" />
+              </div>
+              <div class="form-group">
+                <label>Auxílio da rota</label>
+                <input type="number" step="0.01" id="curvelo-aux-valor" placeholder="0,00" />
+              </div>
+              <div class="form-group">
+                <label>Regra do auxílio</label>
+                <select id="curvelo-aux-tipo">
+                  <option value="nenhum">Sem auxílio próprio</option>
+                  <option value="fixo">Valor fixo</option>
+                  <option value="percentual">% sobre o bruto</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="flex-between">
+              <div class="section-subtitle">Veículos da rota</div>
+              <button class="btn btn-outline btn-sm" data-add-veiculo="curvelo">+ Adicionar veículo</button>
+            </div>
+
+            <div class="mt-8 table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Veículo</th>
+                    <th>Diária (R$)</th>
+                    <th>Dias</th>
+                    <th>Subtotal (R$)</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="curvelo-veiculos-body"></tbody>
+              </table>
+            </div>
+
+            <div class="mt-8 flex-between text-sm">
+              <span class="text-muted">Bruto Curvelo</span>
+              <span id="curvelo-bruto">R$ 0,00</span>
+            </div>
+          </div>
+
+          <!-- SETE LAGOAS -->
+          <div class="card route-card sete-route">
+            <div class="flex-between">
+              <div>
+                <div class="section-title">Rota Sete Lagoas</div>
+                <div class="section-subtitle">Configuração de alunos, passagens e veículos</div>
+              </div>
+              <span class="pill">Sete Lagoas</span>
+            </div>
+
+            <div class="mt-12 form-grid">
+              <div class="form-group">
+                <label>Alunos Integrais</label>
+                <input type="number" id="sete-alunos-integrais" min="0" />
+              </div>
+              <div class="form-group">
+                <label>Alunos com Desconto</label>
+                <input type="number" id="sete-alunos-desconto" min="0" />
+              </div>
+              <div class="form-group">
+                <label>% Desconto</label>
+                <input type="number" id="sete-perc-desconto" min="0" max="100" />
+              </div>
+              <div class="form-group">
+                <label>Passagens Arrecadadas (R$)</label>
+                <input type="number" step="0.01" id="sete-passagens" />
+              </div>
+              <div class="form-group">
+                <label>Auxílio da rota</label>
+                <input type="number" step="0.01" id="sete-aux-valor" placeholder="0,00" />
+              </div>
+              <div class="form-group">
+                <label>Regra do auxílio</label>
+                <select id="sete-aux-tipo">
+                  <option value="nenhum">Sem auxílio próprio</option>
+                  <option value="fixo">Valor fixo</option>
+                  <option value="percentual">% sobre o bruto</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="flex-between">
+              <div class="section-subtitle">Veículos da rota</div>
+              <button class="btn btn-outline btn-sm" data-add-veiculo="sete">+ Adicionar veículo</button>
+            </div>
+
+            <div class="mt-8 table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Veículo</th>
+                    <th>Diária (R$)</th>
+                    <th>Dias</th>
+                    <th>Subtotal (R$)</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="sete-veiculos-body"></tbody>
+              </table>
+            </div>
+
+            <div class="mt-8 flex-between text-sm">
+              <span class="text-muted">Bruto Sete Lagoas</span>
+              <span id="sete-bruto">R$ 0,00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-16 flex-between">
+          <div class="text-sm text-muted">
+            A lógica de rateio considera: <br />
+            • Bruto por rota (soma de veículos) <br />
+            • Percentual de participação no total <br />
+            • Auxílio distribuído proporcionalmente <br />
+            • Subtração de auxílio e passagens <br />
+            • Divisão por alunos equivalentes (desconto proporcional)
+          </div>
+          <div class="form-inline">
+            <button class="btn btn-outline" id="btn-calcular">Recalcular</button>
+            <button class="btn btn-primary" id="btn-salvar">
+              💾 Salvar Rateio (LocalStorage)
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- RELATÓRIO -->
+      <section id="section-relatorio" style="display:none;">
+        <div class="card" id="relatorio-tabela">
+          <div class="flex-between">
+            <div>
+              <div class="section-title">Relatório Estilo Excel</div>
+              <div class="section-subtitle">Resumo completo do rateio do período selecionado</div>
+            </div>
+            <span class="tag">Tabela consolidada</span>
+          </div>
+
+          <div class="mt-12 table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Descrição</th>
+                  <th>Curvelo (R$)</th>
+                  <th>Sete Lagoas (R$)</th>
+                  <th>Total (R$)</th>
+                  <th>Obs.</th>
+                </tr>
+              </thead>
+              <tbody id="relatorio-body">
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="grid-2 mt-16">
+          <div class="card" id="relatorio-dashboard">
+            <div class="section-title">Dashboard para PDF</div>
+            <div class="section-subtitle">Gráficos serão capturados para a página 2 do PDF</div>
+            <div class="mt-12">
+              <canvas id="pdf-chart-line"></canvas>
+            </div>
+            <div class="mt-12">
+              <canvas id="pdf-chart-pie"></canvas>
+            </div>
+          </div>
+
+          <div class="card report-vehicles-card" id="relatorio-veiculos">
+            <div class="section-title">Detalhamento de Veículos</div>
+            <div class="section-subtitle">Será usado na página 3 do PDF</div>
+
+            <div class="mt-12 table-wrapper" style="max-height: 260px;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rota</th>
+                    <th>Veículo</th>
+                    <th>Diária (R$)</th>
+                    <th>Dias</th>
+                    <th>Subtotal (R$)</th>
+                  </tr>
+                </thead>
+                <tbody id="relatorio-veiculos-body">
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HISTÓRICO -->
+      <section id="section-historico" style="display:none;">
+        <div class="card">
+          <div class="flex-between">
+            <div>
+              <div class="section-title">Histórico de Rateios</div>
+              <div class="section-subtitle">Registros salvos em localStorage</div>
+            </div>
+            <button class="btn btn-outline btn-sm" id="btn-recarregar-historico">Recarregar</button>
+          </div>
+
+          <div class="mt-12 table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Período</th>
+                  <th>Data</th>
+                  <th>Bruto Curvelo</th>
+                  <th>Bruto Sete Lagoas</th>
+                  <th>Total Rateado</th>
+                  <th>Alunos Equivalentes</th>
+                  <th>Auxílio Total</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="historico-body">
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" aria-live="polite"></div>
+  <div id="pdf-export-shell" class="pdf-export-shell" aria-hidden="true">
+    <div id="pdf-export-inner" class="pdf-export-inner"></div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
