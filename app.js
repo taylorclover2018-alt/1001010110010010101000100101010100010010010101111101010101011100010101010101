@@ -1,6 +1,6 @@
-// ==========================
-// UTILITÁRIOS
-// ==========================
+/* ==========================
+   UTILITÁRIOS
+========================== */
 const formatCurrency = (value) => {
   if (isNaN(value) || value === null) value = 0;
   return value.toLocaleString("pt-BR", {
@@ -73,9 +73,9 @@ const getRouteInsight = (rota) => {
   };
 };
 
-// ==========================
-// ESTADO GLOBAL
-// ==========================
+/* ==========================
+   ESTADO GLOBAL
+========================== */
 let state = {
   data: "",
   mes: "",
@@ -126,9 +126,9 @@ let state = {
 
 const STORAGE_KEY = "rateio_transporte_universitario";
 
-// ==========================
-// INICIALIZAÇÃO
-// ==========================
+/* ==========================
+   INICIALIZAÇÃO
+========================== */
 const init = () => {
   document.getElementById("topbar-date").textContent = getCurrentDateString();
   initAnoSelects();
@@ -172,28 +172,14 @@ const initAnoSelects = () => {
 const updateTopbarPeriod = () => {
   const mes = document.getElementById("filtro-mes").value;
   const ano = document.getElementById("filtro-ano").value;
-  const labelMes = [
-    "",
-    "Jan",
-    "Fev",
-    "Mar",
-    "Abr",
-    "Mai",
-    "Jun",
-    "Jul",
-    "Ago",
-    "Set",
-    "Out",
-    "Nov",
-    "Dez",
-  ];
+  const labelMes = ["", "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
   const text = mes && ano ? `${labelMes[mes]}/${ano}` : "Sem período selecionado";
   document.getElementById("topbar-current-period").textContent = text;
 };
 
-// ==========================
-// NAVEGAÇÃO SIDEBAR
-// ==========================
+/* ==========================
+   NAVEGAÇÃO SIDEBAR
+========================== */
 const initSidebarNavigation = () => {
   const links = document.querySelectorAll(".sidebar-link[data-section]");
   links.forEach((link) => {
@@ -242,21 +228,14 @@ const initTheme = () => {
 };
 
 const showSection = (id) => {
-  const sections = [
-    "section-dashboard",
-    "section-rateio",
-    "section-relatorio",
-    "section-historico",
-  ];
+  const sections = ["section-dashboard", "section-rateio", "section-relatorio", "section-historico"];
   sections.forEach((sid) => {
-    document.getElementById(sid).style.display =
-      sid === "section-" + id ? "block" : "none";
+    document.getElementById(sid).style.display = sid === "section-" + id ? "block" : "none";
   });
 };
-
-// ==========================
-// VEÍCULOS
-// ==========================
+/* ==========================
+   VEÍCULOS
+========================== */
 const initVeiculosButtons = () => {
   document.querySelectorAll("button[data-add-veiculo]").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -284,9 +263,9 @@ const removeVeiculo = (rota, id) => {
   renderAll();
 };
 
-// ==========================
-// AÇÕES PRINCIPAIS
-// ==========================
+/* ==========================
+   AÇÕES PRINCIPAIS
+========================== */
 const initActions = () => {
   document.getElementById("btn-calcular").addEventListener("click", () => {
     readFormToState();
@@ -309,11 +288,9 @@ const initActions = () => {
     renderAll();
   });
 
-  document
-    .getElementById("btn-recarregar-historico")
-    .addEventListener("click", () => {
-      renderHistorico();
-    });
+  document.getElementById("btn-recarregar-historico").addEventListener("click", () => {
+    renderHistorico();
+  });
 
   document.getElementById("btn-reset").addEventListener("click", () => {
     if (confirm("Tem certeza que deseja limpar todo o histórico?")) {
@@ -327,55 +304,31 @@ const initActions = () => {
   document.getElementById("btn-export-pdf").addEventListener("click", exportPDF);
 };
 
-// ==========================
-// FORM -> STATE
-// ==========================
+/* ==========================
+   FORM -> STATE
+========================== */
 const readFormToState = () => {
   state.data = document.getElementById("input-data").value;
   state.mes = document.getElementById("input-mes").value;
   state.ano = document.getElementById("input-ano").value;
-  state.auxDinheiro = parseNumber(
-    document.getElementById("input-aux-dinheiro").value
-  );
-  state.auxCombustivel = parseNumber(
-    document.getElementById("input-aux-combustivel").value
-  );
+  state.auxDinheiro = parseNumber(document.getElementById("input-aux-dinheiro").value);
+  state.auxCombustivel = parseNumber(document.getElementById("input-aux-combustivel").value);
   state.descricao = document.getElementById("input-descricao").value;
 
   // Curvelo
-  state.rotas.curvelo.alunosIntegrais = parseNumber(
-    document.getElementById("curvelo-alunos-integrais").value
-  );
-  state.rotas.curvelo.alunosDesconto = parseNumber(
-    document.getElementById("curvelo-alunos-desconto").value
-  );
-  state.rotas.curvelo.percDesconto = parseNumber(
-    document.getElementById("curvelo-perc-desconto").value
-  );
-  state.rotas.curvelo.passagens = parseNumber(
-    document.getElementById("curvelo-passagens").value
-  );
-  state.rotas.curvelo.auxValor = parseNumber(
-    document.getElementById("curvelo-aux-valor").value
-  );
+  state.rotas.curvelo.alunosIntegrais = parseNumber(document.getElementById("curvelo-alunos-integrais").value);
+  state.rotas.curvelo.alunosDesconto = parseNumber(document.getElementById("curvelo-alunos-desconto").value);
+  state.rotas.curvelo.percDesconto = parseNumber(document.getElementById("curvelo-perc-desconto").value);
+  state.rotas.curvelo.passagens = parseNumber(document.getElementById("curvelo-passagens").value);
+  state.rotas.curvelo.auxValor = parseNumber(document.getElementById("curvelo-aux-valor").value);
   state.rotas.curvelo.auxTipo = document.getElementById("curvelo-aux-tipo").value || "nenhum";
 
   // Sete Lagoas
-  state.rotas.sete.alunosIntegrais = parseNumber(
-    document.getElementById("sete-alunos-integrais").value
-  );
-  state.rotas.sete.alunosDesconto = parseNumber(
-    document.getElementById("sete-alunos-desconto").value
-  );
-  state.rotas.sete.percDesconto = parseNumber(
-    document.getElementById("sete-perc-desconto").value
-  );
-  state.rotas.sete.passagens = parseNumber(
-    document.getElementById("sete-passagens").value
-  );
-  state.rotas.sete.auxValor = parseNumber(
-    document.getElementById("sete-aux-valor").value
-  );
+  state.rotas.sete.alunosIntegrais = parseNumber(document.getElementById("sete-alunos-integrais").value);
+  state.rotas.sete.alunosDesconto = parseNumber(document.getElementById("sete-alunos-desconto").value);
+  state.rotas.sete.percDesconto = parseNumber(document.getElementById("sete-perc-desconto").value);
+  state.rotas.sete.passagens = parseNumber(document.getElementById("sete-passagens").value);
+  state.rotas.sete.auxValor = parseNumber(document.getElementById("sete-aux-valor").value);
   state.rotas.sete.auxTipo = document.getElementById("sete-aux-tipo").value || "nenhum";
 };
 
@@ -384,133 +337,28 @@ const writeStateToForm = () => {
   document.getElementById("input-mes").value = state.mes || "";
   document.getElementById("input-ano").value = state.ano || "";
   document.getElementById("input-aux-dinheiro").value = state.auxDinheiro || "";
-  document.getElementById("input-aux-combustivel").value =
-    state.auxCombustivel || "";
+  document.getElementById("input-aux-combustivel").value = state.auxCombustivel || "";
   document.getElementById("input-descricao").value = state.descricao || "";
 
-  document.getElementById("curvelo-alunos-integrais").value =
-    state.rotas.curvelo.alunosIntegrais || "";
-  document.getElementById("curvelo-alunos-desconto").value =
-    state.rotas.curvelo.alunosDesconto || "";
-  document.getElementById("curvelo-perc-desconto").value =
-    state.rotas.curvelo.percDesconto || "";
-  document.getElementById("curvelo-passagens").value =
-    state.rotas.curvelo.passagens || "";
+  document.getElementById("curvelo-alunos-integrais").value = state.rotas.curvelo.alunosIntegrais || "";
+  document.getElementById("curvelo-alunos-desconto").value = state.rotas.curvelo.alunosDesconto || "";
+  document.getElementById("curvelo-perc-desconto").value = state.rotas.curvelo.percDesconto || "";
+  document.getElementById("curvelo-passagens").value = state.rotas.curvelo.passagens || "";
 
-  document.getElementById("sete-alunos-integrais").value =
-    state.rotas.sete.alunosIntegrais || "";
-  document.getElementById("sete-alunos-desconto").value =
-    state.rotas.sete.alunosDesconto || "";
-  document.getElementById("sete-perc-desconto").value =
-    state.rotas.sete.percDesconto || "";
-  document.getElementById("sete-passagens").value =
-    state.rotas.sete.passagens || "";
-  document.getElementById("curvelo-aux-valor").value =
-    state.rotas.curvelo.auxValor || "";
-  document.getElementById("curvelo-aux-tipo").value =
-    state.rotas.curvelo.auxTipo || "nenhum";
-  document.getElementById("sete-aux-valor").value =
-    state.rotas.sete.auxValor || "";
-  document.getElementById("sete-aux-tipo").value =
-    state.rotas.sete.auxTipo || "nenhum";
+  document.getElementById("sete-alunos-integrais").value = state.rotas.sete.alunosIntegrais || "";
+  document.getElementById("sete-alunos-desconto").value = state.rotas.sete.alunosDesconto || "";
+  document.getElementById("sete-perc-desconto").value = state.rotas.sete.percDesconto || "";
+  document.getElementById("sete-passagens").value = state.rotas.sete.passagens || "";
+
+  document.getElementById("curvelo-aux-valor").value = state.rotas.curvelo.auxValor || "";
+  document.getElementById("curvelo-aux-tipo").value = state.rotas.curvelo.auxTipo || "nenhum";
+  document.getElementById("sete-aux-valor").value = state.rotas.sete.auxValor || "";
+  document.getElementById("sete-aux-tipo").value = state.rotas.sete.auxTipo || "nenhum";
 };
 
-// ==========================
-// LÓGICA DE CÁLCULO
-// ==========================
-const calcular = () => {
-  const c = state.rotas.curvelo;
-  const s = state.rotas.sete;
-
-  const brutoCurvelo = c.veiculos.reduce(
-    (sum, v) => sum + v.diaria * v.dias,
-    0
-  );
-  const brutoSete = s.veiculos.reduce(
-    (sum, v) => sum + v.diaria * v.dias,
-    0
-  );
-  const totalBruto = brutoCurvelo + brutoSete;
-
-  const percCurvelo = totalBruto ? (brutoCurvelo / totalBruto) * 100 : 0;
-  const percSete = totalBruto ? (brutoSete / totalBruto) * 100 : 0;
-
-  const auxTotal = state.auxDinheiro + state.auxCombustivel;
-
-  const getAuxilioRota = (rota, bruto) => {
-    if (rota.auxTipo === "fixo") return rota.auxValor || 0;
-    if (rota.auxTipo === "percentual") return (bruto * ((rota.auxValor || 0) / 100));
-    return 0;
-  };
-
-  const rotasComRegra = [
-    { key: "curvelo", bruto: brutoCurvelo, rota: c },
-    { key: "sete", bruto: brutoSete, rota: s },
-  ].filter(({ rota }) => rota.auxTipo && rota.auxTipo !== "nenhum");
-
-  const auxílioConfiguradoTotal = rotasComRegra.reduce((sum, { bruto, rota }) => {
-    return sum + getAuxilioRota(rota, bruto);
-  }, 0);
-
-  const restanteAux = Math.max(0, auxTotal - auxílioConfiguradoTotal);
-  const brutoRestante = rotasComRegra.length < 2
-    ? 0
-    : [
-        { bruto: brutoCurvelo, rota: c },
-        { bruto: brutoSete, rota: s },
-      ].filter(({ rota }) => !rota.auxTipo || rota.auxTipo === "nenhum")
-      .reduce((sum, { bruto }) => sum + bruto, 0);
-
-  const auxCurvelo = c.auxTipo && c.auxTipo !== "nenhum"
-    ? getAuxilioRota(c, brutoCurvelo)
-    : (brutoRestante > 0 ? (restanteAux * brutoCurvelo) / brutoRestante : 0);
-  const auxSete = s.auxTipo && s.auxTipo !== "nenhum"
-    ? getAuxilioRota(s, brutoSete)
-    : (brutoRestante > 0 ? (restanteAux * brutoSete) / brutoRestante : 0);
-
-  const liquidoCurvelo = brutoCurvelo - auxCurvelo - (c.passagens || 0);
-  const liquidoSete = brutoSete - auxSete - (s.passagens || 0);
-
-  const alunosEqCurvelo =
-    c.alunosIntegrais +
-    c.alunosDesconto * (1 - (c.percDesconto || 0) / 100);
-  const alunosEqSete =
-    s.alunosIntegrais +
-    s.alunosDesconto * (1 - (s.percDesconto || 0) / 100);
-
-  const valorAlunoCurvelo =
-    alunosEqCurvelo > 0 ? liquidoCurvelo / alunosEqCurvelo : 0;
-  const valorAlunoSete =
-    alunosEqSete > 0 ? liquidoSete / alunosEqSete : 0;
-
-  const totalRateado = liquidoCurvelo + liquidoSete;
-  const totalAlunosEq = alunosEqCurvelo + alunosEqSete;
-  const veiculosAtivos = c.veiculos.length + s.veiculos.length;
-
-  state.calculo = {
-    brutoCurvelo,
-    brutoSete,
-    totalBruto,
-    percCurvelo,
-    percSete,
-    auxTotal,
-    auxCurvelo,
-    auxSete,
-    liquidoCurvelo,
-    liquidoSete,
-    alunosEqCurvelo,
-    alunosEqSete,
-    valorAlunoCurvelo,
-    valorAlunoSete,
-    totalRateado,
-    totalAlunosEq,
-    veiculosAtivos,
-  };
-};
-
-// ==========================
-// LOCALSTORAGE
-// ==========================
+/* ==========================
+   LOCALSTORAGE
+========================== */
 const loadAllFromStorage = () => {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (!raw) return [];
@@ -589,9 +437,9 @@ const loadFromStorageForCurrentPeriod = () => {
   renderHistorico();
 };
 
-// ==========================
-// RENDERIZAÇÃO
-// ==========================
+/* ==========================
+   RENDERIZAÇÃO
+========================== */
 let chartLine, chartPie, chartBar;
 let pdfChartLine, pdfChartPie;
 
@@ -605,7 +453,82 @@ const renderAll = () => {
   renderPdfShell();
   renderCharts();
 };
+/* ==========================
+   LÓGICA DE CÁLCULO (CORRIGIDA)
+========================== */
+const calcular = () => {
+  const c = state.rotas.curvelo;
+  const s = state.rotas.sete;
 
+  const brutoCurvelo = c.veiculos.reduce((sum, v) => sum + v.diaria * v.dias, 0);
+  const brutoSete = s.veiculos.reduce((sum, v) => sum + v.diaria * v.dias, 0);
+  const totalBruto = brutoCurvelo + brutoSete;
+
+  const percCurvelo = totalBruto ? brutoCurvelo / totalBruto : 0;
+  const percSete = totalBruto ? brutoSete / totalBruto : 0;
+
+  const auxTotal = state.auxDinheiro + state.auxCombustivel;
+
+  // NOVA LÓGICA DE AUXÍLIO
+  const calcAux = (rota, bruto, perc) => {
+    if (rota.auxTipo === "fixo") {
+      return rota.auxValor || 0;
+    }
+    if (rota.auxTipo === "percentual") {
+      return auxTotal * ((rota.auxValor || 0) / 100);
+    }
+    // proporcional ao bruto
+    return auxTotal * perc;
+  };
+
+  const auxCurvelo = calcAux(c, brutoCurvelo, percCurvelo);
+  const auxSete = calcAux(s, brutoSete, percSete);
+
+  const liquidoCurvelo = brutoCurvelo - auxCurvelo - (c.passagens || 0);
+  const liquidoSete = brutoSete - auxSete - (s.passagens || 0);
+
+  const alunosEqCurvelo =
+    c.alunosIntegrais +
+    c.alunosDesconto * (1 - (c.percDesconto || 0) / 100);
+
+  const alunosEqSete =
+    s.alunosIntegrais +
+    s.alunosDesconto * (1 - (s.percDesconto || 0) / 100);
+
+  const valorAlunoCurvelo =
+    alunosEqCurvelo > 0 ? liquidoCurvelo / alunosEqCurvelo : 0;
+
+  const valorAlunoSete =
+    alunosEqSete > 0 ? liquidoSete / alunosEqSete : 0;
+
+  const totalRateado = liquidoCurvelo + liquidoSete;
+  const totalAlunosEq = alunosEqCurvelo + alunosEqSete;
+  const veiculosAtivos = c.veiculos.length + s.veiculos.length;
+
+  state.calculo = {
+    brutoCurvelo,
+    brutoSete,
+    totalBruto,
+    percCurvelo: percCurvelo * 100,
+    percSete: percSete * 100,
+    auxTotal,
+    auxCurvelo,
+    auxSete,
+    liquidoCurvelo,
+    liquidoSete,
+    alunosEqCurvelo,
+    alunosEqSete,
+    valorAlunoCurvelo,
+    valorAlunoSete,
+    totalRateado,
+    totalAlunosEq,
+    veiculosAtivos,
+  };
+};
+
+/* ==========================
+   RENDERIZAÇÃO (continuação)
+========================== */
 const renderVeiculosTables = () => {
   const curBody = document.getElementById("curvelo-veiculos-body");
   const seteBody = document.getElementById("sete-veiculos-body");
@@ -652,6 +575,9 @@ const renderVeiculosTables = () => {
   );
 };
 
+/* ==========================
+   DASHBOARD
+========================== */
 const renderDashboardCards = () => {
   document.getElementById("card-total-rateado").textContent =
     formatCurrency(state.calculo.totalRateado);
@@ -682,6 +608,9 @@ const renderResumoDashboard = () => {
     formatCurrency(state.calculo.valorAlunoSete);
 };
 
+/* ==========================
+   RELATÓRIO
+========================== */
 const renderRelatorioTabela = () => {
   const tbody = document.getElementById("relatorio-body");
   tbody.innerHTML = "";
@@ -700,36 +629,16 @@ const renderRelatorioTabela = () => {
   };
 
   addRow("Bruto por rota", state.calculo.brutoCurvelo, state.calculo.brutoSete);
-  addRow(
-    "Passagens arrecadadas",
-    state.rotas.curvelo.passagens,
-    state.rotas.sete.passagens
-  );
-  addRow(
-    "Auxílio distribuído",
-    state.calculo.auxCurvelo,
-    state.calculo.auxSete,
-    "Proporcional ao bruto"
-  );
-  addRow(
-    "Líquido após auxílio e passagens",
-    state.calculo.liquidoCurvelo,
-    state.calculo.liquidoSete
-  );
-  addRow(
-    "Valor por aluno",
-    state.calculo.valorAlunoCurvelo,
-    state.calculo.valorAlunoSete,
-    "Alunos equivalentes"
-  );
-  addRow(
-    "Total rateado",
-    state.calculo.liquidoCurvelo,
-    state.calculo.liquidoSete,
-    "Soma das rotas"
-  );
+  addRow("Passagens arrecadadas", state.rotas.curvelo.passagens, state.rotas.sete.passagens);
+  addRow("Auxílio distribuído", state.calculo.auxCurvelo, state.calculo.auxSete, "Proporcional ao bruto");
+  addRow("Líquido após auxílio e passagens", state.calculo.liquidoCurvelo, state.calculo.liquidoSete);
+  addRow("Valor por aluno", state.calculo.valorAlunoCurvelo, state.calculo.valorAlunoSete, "Alunos equivalentes");
+  addRow("Total rateado", state.calculo.liquidoCurvelo, state.calculo.liquidoSete, "Soma das rotas");
 };
 
+/* ==========================
+   RELATÓRIO VEÍCULOS
+========================== */
 const renderRelatorioVeiculos = () => {
   const tbody = document.getElementById("relatorio-veiculos-body");
   tbody.innerHTML = "";
@@ -759,26 +668,15 @@ const renderRelatorioVeiculos = () => {
   });
 };
 
+/* ==========================
+   HISTÓRICO
+========================== */
 const renderHistorico = () => {
   const tbody = document.getElementById("historico-body");
   tbody.innerHTML = "";
   const list = loadAllFromStorage().sort((a, b) => a.key.localeCompare(b.key));
 
-  const labelMes = [
-    "",
-    "Jan",
-    "Fev",
-    "Mar",
-    "Abr",
-    "Mai",
-    "Jun",
-    "Jul",
-    "Ago",
-    "Set",
-    "Out",
-    "Nov",
-    "Dez",
-  ];
+  const labelMes = ["", "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"];
 
   list.forEach((r) => {
     const st = r.state;
@@ -794,9 +692,7 @@ const renderHistorico = () => {
       <td>${formatCurrency(st.calculo.totalRateado)}</td>
       <td>${(st.calculo.totalAlunosEq || 0).toFixed(2).replace(".", ",")}</td>
       <td>${formatCurrency(st.calculo.auxTotal)}</td>
-      <td>
-        <button class="btn btn-outline btn-sm">Carregar</button>
-      </td>
+      <td><button class="btn btn-outline btn-sm">Carregar</button></td>
     `;
     tr.querySelector("button").addEventListener("click", () => {
       state = st;
@@ -809,20 +705,16 @@ const renderHistorico = () => {
       calcular();
       renderAll();
       showSection("rateio");
-      document
-        .querySelectorAll(".sidebar-link")
-        .forEach((l) => l.classList.remove("active"));
-      document
-        .querySelector('.sidebar-link[data-section="rateio"]')
-        .classList.add("active");
+      document.querySelectorAll(".sidebar-link").forEach((l) => l.classList.remove("active"));
+      document.querySelector('.sidebar-link[data-section="rateio"]').classList.add("active");
     });
     tbody.appendChild(tr);
   });
 };
 
-// ==========================
-// TOAST
-// ==========================
+/* ==========================
+   TOAST
+========================== */
 const showToast = (message) => {
   const toast = document.getElementById("toast");
   toast.textContent = message;
@@ -833,14 +725,13 @@ const showToast = (message) => {
   }, 2200);
 };
 
-// ==========================
-// GRÁFICOS
-// ==========================
+/* ==========================
+   GRÁFICOS
+========================== */
 const renderCharts = () => {
   const list = loadAllFromStorage().sort((a, b) => a.key.localeCompare(b.key));
   const labels = list.map((r) => {
     const st = r.state;
-    const mesNum = parseInt(st.mes || 0);
     return `${getMonthLabel(st.mes)} / ${st.ano || "----"}`;
   });
   const dataRateado = list.map((r) => r.state.calculo.totalRateado || 0);
@@ -902,7 +793,11 @@ const renderCharts = () => {
     chartPie = new Chart(ctxPie, {
       type: "pie",
       data: pieData,
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: "bottom" } } },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: true, position: "bottom" } },
+      },
     });
   }
 
@@ -945,14 +840,18 @@ const renderCharts = () => {
     pdfChartPie = new Chart(ctxPdfPie, {
       type: "pie",
       data: pieData,
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: true, position: "bottom" } } },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: true, position: "bottom" } },
+      },
     });
   }
 };
 
-// ==========================
-// PDF
-// ==========================
+/* ==========================
+   PDF
+========================== */
 const renderPdfShell = () => {
   const container = document.getElementById("pdf-export-inner");
   if (!container) return;
@@ -985,131 +884,4 @@ const renderPdfShell = () => {
             <li>Bruto por rota: soma das diárias dos veículos cadastrados.</li>
             <li>Participação da rota no total bruto para distribuição do auxílio.</li>
             <li>Auxílio distribuído proporcionalmente ao bruto de cada rota.</li>
-            <li>Líquido: bruto menos auxílio e menos passagens arrecadadas.</li>
-            <li>Valor por aluno: líquido dividido pelos alunos equivalentes, considerando desconto.</li>
-          </ul>
-        </div>
-
-        <div class="pdf-card">
-          <h3>Resumo das rotas</h3>
-          <div class="pdf-route-list">
-            <div class="pdf-route-item">
-              <strong>Curvelo</strong>
-              <p>% sobre o bruto: ${formatPercent(state.calculo.percCurvelo)}</p>
-              <p>Valor aluno com desconto: ${formatCurrency(state.calculo.valorAlunoCurvelo)}</p>
-              <p>Alunos equivalentes: ${curAlunosEq.toFixed(2).replace(".", ",")}</p>
-            </div>
-            <div class="pdf-route-item">
-              <strong>Sete Lagoas</strong>
-              <p>% sobre o bruto: ${formatPercent(state.calculo.percSete)}</p>
-              <p>Valor aluno com desconto: ${formatCurrency(state.calculo.valorAlunoSete)}</p>
-              <p>Alunos equivalentes: ${seteAlunosEq.toFixed(2).replace(".", ",")}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="pdf-grid">
-        <div class="pdf-card">
-          <h3>Desenhos representativos</h3>
-          <div class="pdf-map-grid">
-            <div class="pdf-map-card">
-              <svg viewBox="0 0 220 120" role="img" aria-label="Mapa simplificado de Curvelo">
-                <rect x="8" y="8" width="204" height="104" rx="16" fill="#eef6ff" />
-                <path d="M36 90 L56 58 L74 66 L94 46 L118 60 L144 34 L166 48 L184 32 L184 90 Z" fill="#60a5fa" />
-                <path d="M44 88 L75 72 L104 80 L122 68 L154 78 L176 70" stroke="#0f172a" stroke-width="3" fill="none" stroke-linecap="round" />
-                <circle cx="70" cy="46" r="8" fill="#0f766e" />
-                <circle cx="142" cy="44" r="8" fill="#0f766e" />
-              </svg>
-              <span>Curvelo</span>
-            </div>
-            <div class="pdf-map-card">
-              <svg viewBox="0 0 220 120" role="img" aria-label="Mapa simplificado de Sete Lagoas">
-                <rect x="8" y="8" width="204" height="104" rx="16" fill="#ecfeff" />
-                <path d="M34 84 L58 70 L80 78 L104 50 L126 62 L156 40 L182 56 L182 90 L34 90 Z" fill="#2dd4bf" />
-                <path d="M48 82 L72 62 L98 72 L132 54 L158 66 L178 58" stroke="#0f172a" stroke-width="3" fill="none" stroke-linecap="round" />
-                <circle cx="90" cy="58" r="7" fill="#0f766e" />
-                <circle cx="160" cy="48" r="7" fill="#0f766e" />
-              </svg>
-              <span>Sete Lagoas</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="pdf-card">
-          <h3>Valores com desconto</h3>
-          <div class="pdf-route-list">
-            <div class="pdf-route-item">
-              <strong>Curvelo</strong>
-              <p>Desconto aplicado: ${formatCurrency(curDesconto)}</p>
-              <p>Alunos com desconto: ${cur.alunosDesconto}</p>
-              <p>% de desconto: ${formatPercent(cur.percDesconto)}</p>
-            </div>
-            <div class="pdf-route-item">
-              <strong>Sete Lagoas</strong>
-              <p>Desconto aplicado: ${formatCurrency(seteDesconto)}</p>
-              <p>Alunos com desconto: ${sete.alunosDesconto}</p>
-              <p>% de desconto: ${formatPercent(sete.percDesconto)}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="pdf-charts-grid">
-        <div class="pdf-chart-card">
-          <h3>Evolução do rateio</h3>
-          <canvas id="pdf-chart-line"></canvas>
-        </div>
-        <div class="pdf-chart-card">
-          <h3>Participação do bruto</h3>
-          <canvas id="pdf-chart-pie"></canvas>
-        </div>
-      </div>
-
-      <div class="pdf-footer">Gerado em ${new Date().toLocaleString("pt-BR")} • ${escapeHtml(getFileName())}</div>
-    </div>
-  `;
-
-  renderCharts();
-};
-
-const exportPDF = async () => {
-  renderPdfShell();
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF("p", "mm", "a4");
-  const shell = document.getElementById("pdf-export-inner");
-
-  if (!shell) {
-    showToast("Não foi possível gerar o PDF.");
-    return;
-  }
-
-  await new Promise((resolve) => setTimeout(resolve, 160));
-
-  const canvas = await html2canvas(shell, {
-    scale: 2,
-    backgroundColor: "#ffffff",
-    useCORS: true,
-  });
-  const imgData = canvas.toDataURL("image/png");
-
-  const pageWidth = pdf.internal.pageSize.getWidth() - 20;
-  const pageHeight = pdf.internal.pageSize.getHeight() - 20;
-  const ratio = canvas.width / pageWidth;
-  const imgHeight = canvas.height / ratio;
-  const finalHeight = Math.min(imgHeight, pageHeight);
-  const finalWidth = pageWidth;
-
-  pdf.addImage(imgData, "PNG", 10, 10, finalWidth, finalHeight);
-
-  const safeName = getFileName();
-  pdf.save(`${safeName}.pdf`);
-  showToast("PDF exportado com sucesso.");
-};
-
-// ==========================
-// START
-// ==========================
-window.addEventListener("load", () => {
-  init();
-});
+            <li>L
